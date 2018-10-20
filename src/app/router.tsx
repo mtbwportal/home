@@ -1,20 +1,6 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { ConnectedRouter } from 'connected-react-router'
-
-import {
-  ErrorBoundary,
-  // ErrorBoundaryRoute,
-  Header,
-  Sidebar,
-  Footer,
-  Home,
-  Players,
-  Teams,
-  Welcome,
-  NotFound,
-} from '../view';
-import { urls } from '../util';
+import { ConnectedRouter } from 'connected-react-router';
+import { ErrorBoundary, Header, Sidebar, Content, Footer } from '../view/components';
 
 export default class Router extends React.Component<any> {
   render() {
@@ -24,17 +10,9 @@ export default class Router extends React.Component<any> {
         <ErrorBoundary>
           <div className="app">
             <Header />
-            <div className="app-dashboard">
+            <div className="app-main">
               <Sidebar />
-              <div className="app-content">
-                <Switch>
-                    <Route exact path={urls.welcome()} component={Welcome} />
-                    <Route path={urls.home()} component={Home} />
-                    <Route path={urls.players()} component={Players} />
-                    <Route path={urls.teams()} component={Teams} />
-                  <Route component={NotFound} />
-                </Switch>
-              </div>
+              <Content />
             </div>
             <Footer />
           </div>

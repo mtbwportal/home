@@ -9,29 +9,23 @@ module.exports = (env = {}) => ({
   entry: ['./src/index.tsx'],
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(''),
-        REPO_GIT_REV: JSON.stringify(process.env.REPO_GIT_REV),
-        DB_VERSION: JSON.stringify(process.env.DB_VERSION),
-        JS_SDK_VERSION: JSON.stringify(process.env.JS_SDK_VERSION),
-        UI_VERSION: JSON.stringify(process.env.npm_package_version)
-      }
-    })
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
   ],
   optimization: {
     minimize: true,
     minimizer: [
       new UglifyJsPlugin({
-        uglifyOptions: { output: { comments: false } }
-      })
-    ]
+        uglifyOptions: { output: { comments: false } },
+      }),
+    ],
   },
   module: {
     rules: [
       {
         test: /\.(j|t)sx?$/,
         loader: 'ts-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       { test: /\.svg/, use: 'svg-url-loader' },
       {
@@ -66,15 +60,15 @@ module.exports = (env = {}) => ({
           },
         },
       },
-    ]
+    ],
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js'],
   },
   output: {
     path: `${__dirname}/dist/static`,
     publicPath: '/',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   devtool: 'cheap-source-map',
 });

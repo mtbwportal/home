@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { push } from 'connected-react-router';
+import { StitchUser } from 'mongodb-stitch-browser-sdk';
 import { AppState } from '../../../state';
+import { urls } from '../../../util';
 
 interface StateProps {
   location: string;
+  user?: StitchUser;
 }
 
 interface DispatchProps {
@@ -16,10 +19,12 @@ type Props = StateProps & DispatchProps;
 
 class Header extends Component<Props> {
   render() {
-    const { gotoWelcome } = this.props;
+    const { gotoWelcome, user } = this.props;
     return (
-      <div className="app-header">
-        <img src="static/logo.png" alt="mmdb" onClick={gotoWelcome} />
+      <div className="header">
+        <img src="/static/logo.png" alt="mmdb" onClick={gotoWelcome} />
+        {!!user && <button className="header-session-mgmt">Log out</button>}
+        {!user && <button className="header-session-mgmt">Log in</button>}
       </div>
     );
   }
@@ -27,13 +32,12 @@ class Header extends Component<Props> {
 
 const mapStateToProps = (state: AppState) => ({
   location: state.router!.location.pathname,
+  user: state.session.user
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    gotoWelcome: () => dispatch(push('/')),
-  };
-};
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  gotoWelcome: () => dispatch(push(urls.welcome())),
+});
 
 export default connect(
   mapStateToProps,
