@@ -16,4 +16,9 @@ export default {
     confirmation: '/confirmation',
     passwordReset: '/password_reset',
   },
+
+  yahoo: {
+    login: '/yahoo_login',
+    callback: '/callback',
+  }
 };

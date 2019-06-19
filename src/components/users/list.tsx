@@ -15,8 +15,6 @@ const UsersList = ({ goto, user, users }: Props) => (
     data={Object.keys(users).map(userId => users[userId])}
     onRowClick={(u, e) => {
       e.preventDefault();
-      console.log(user);
-      console.log(u);
       if (user && userId(u) === userId(user)) {
         goto(AppUrls.users.find(userId(u)));
       }

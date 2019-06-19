@@ -20,6 +20,14 @@ const UsersPage = Loadable({
   loader: () => import('../pages').then(module => module.UsersPage),
   loading: LoadingPage,
 });
+const YahooLoginPage = Loadable({
+  loader: () => import('../pages').then(module => module.YahooLoginPage),
+  loading: LoadingPage,
+});
+const YahooCallbackPage = Loadable({
+  loader: () => import('../pages').then(module => module.YahooCallbackPage),
+  loading: LoadingPage,
+});
 const LoginPage = Loadable({
   loader: () => import('@makes-apps/lib').then(module => module.StackedLoginPage),
   loading: LoadingPage,
@@ -129,6 +137,8 @@ const AppRoutes = ({
         />
       )}
     />
+    <AuthRoute open path={AppUrls.yahoo.login} component={YahooLoginPage} />
+    <AuthRoute open path={AppUrls.yahoo.callback} component={YahooCallbackPage} />
     <AuthRoute component={NotFoundPage} />
   </AuthRoutes>
 );
