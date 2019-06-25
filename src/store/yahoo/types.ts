@@ -1,3 +1,5 @@
+import { YahooFantasyUser } from './api';
+
 export interface YahooOauth {
   access_token: string;
   id_token: string;
@@ -11,6 +13,7 @@ export class State {
   static NAMESPACE = 'yahoo';
 
   constructor(
-    public oauth: YahooOauth | undefined = undefined
+    public oauth: YahooOauth | undefined = undefined,
+    public users: YahooFantasyUser[] = []
   ) {}
 }

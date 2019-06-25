@@ -1,6 +1,9 @@
 import AppActions from '../../app/actions';
+import AppContext from '../../app/context';
+import AppState from '../../app/state';
 
-import { YahooOauth, State } from './types';
+import { parseUsers, YahooFantasyUser } from './api';
+import { State, YahooOauth } from './types';
 
 const factory = AppActions.forNamespace<State>('yahoo');
 
@@ -16,11 +19,21 @@ export const getToken = factory
     return state;
   });
 
-export const getLeagues = factory
-  .withType('get leagues')
-  .asThunk<[string], any>(accessToken => (_dispatch, _getState, stitch) =>
-    stitch.stitch.callFunction('getLeagues', [accessToken]).then(res => {
-      console.log(res);
-      return res;
-    })
-  );
+const makeYahooApiRequest = ({ yahoo }: AppState, { stitch }: AppContext, url: string): Promise<string> =>
+  stitch.callFunction('makeYahooApiRequest', [url, yahoo.oauth ? yahoo.oauth.access_token : '']);
+
+export const getUserBaseballTeams = factory
+  .withType('get user baseball teams')
+  .asThunk<[], YahooFantasyUser[]>(() => (_dispatch, getState, stitch) =>
+    makeYahooApiRequest(
+      getState(),
+      stitch,
+      'https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;game_keys=mlb/teams'
+    ).then(res => parseUsers(new DOMParser().parseFromString(res, 'application/xml')))
+  )
+  .withReducer((state, action) => {
+    if (action.status === 'success') {
+      return { ...state, users: action.payload };
+    }
+    return state;
+  });

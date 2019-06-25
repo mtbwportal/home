@@ -6,7 +6,7 @@ import queryString from 'querystring';
 import { Button, StackedPage } from '@makes-apps/lib';
 
 import AppState from '../app/state';
-import { getLeagues, getToken, YahooOauth } from '../store/yahoo';
+import { getUserBaseballTeams, getToken, YahooOauth } from '../store/yahoo';
 
 interface StateProps {
   oauth?: YahooOauth;
@@ -15,7 +15,7 @@ interface StateProps {
 
 interface DispatchProps {
   getYahooOauth: (code: string) => Promise<void>;
-  getLeagues: (accessToken: string) => Promise<void>;
+  getUserBaseballTeams: () => Promise<void>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -30,7 +30,7 @@ const parseCode = (search: string): string => {
 
 class YahooCallbackPage extends React.Component<Props> {
   render() {
-    const { getLeagues, getYahooOauth, oauth, search } = this.props;
+    const { getUserBaseballTeams, getYahooOauth, search } = this.props;
     if (search) {
       const code = parseCode(search);
       return (
@@ -38,7 +38,7 @@ class YahooCallbackPage extends React.Component<Props> {
           <Button as="button" onClick={() => getYahooOauth(code)}>
             get oauth!
           </Button>
-          <Button as="button" onClick={() => getLeagues(oauth ? oauth.access_token : '')}>
+          <Button as="button" onClick={() => getUserBaseballTeams()}>
             try request
           </Button>
         </StackedPage>
@@ -52,17 +52,16 @@ class YahooCallbackPage extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ router, yahoo }: AppState) => {
+const mapStateToProps = ({ router }: AppState) => {
   const search = router.location.search;
   return {
-    oauth: yahoo.oauth,
     search: search.charAt(0) === '?' ? search.substring(1) : search,
   };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   getYahooOauth: (code: string) => dispatch<any>(getToken.creator.worker(code)),
-  getLeagues: (accessToken: string) => dispatch<any>(getLeagues.creator.worker(accessToken)),
+  getUserBaseballTeams: () => dispatch<any>(getUserBaseballTeams.creator.worker()),
 });
 
 export default connect(
