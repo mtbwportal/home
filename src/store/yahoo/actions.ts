@@ -1,11 +1,8 @@
-import AppActions from '../../app/actions';
-import AppContext from '../../app/context';
-import AppState from '../../app/state';
+import appActions from '../../actions';
+import { RootContext, RootState } from '../../root';
+import { parseUsers, YahooFantasyUser, YahooState, YahooOauth } from '../../types';
 
-import { parseUsers, YahooFantasyUser } from './api';
-import { State, YahooOauth } from './types';
-
-const factory = AppActions.forNamespace<State>('yahoo');
+const factory = appActions.app().forNamespace<YahooState>(YahooState.NAMESPACE);
 
 export const getToken = factory
   .withType('get oauth token')
@@ -19,7 +16,7 @@ export const getToken = factory
     return state;
   });
 
-const makeYahooApiRequest = ({ yahoo }: AppState, { stitch }: AppContext, url: string): Promise<string> =>
+const makeYahooApiRequest = ({ yahoo }: RootState, { stitch }: RootContext, url: string): Promise<string> =>
   stitch.callFunction('makeYahooApiRequest', [url, yahoo.oauth ? yahoo.oauth.access_token : '']);
 
 export const getUserBaseballTeams = factory

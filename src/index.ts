@@ -1,36 +1,41 @@
-import { AppFactory, debounce, LocalAppState, registerAuthListener } from '@makes-apps/lib';
-import App, { AppContext, AppLocalKey, AppReducer, AppState } from './app';
-import { setUser } from './store/auth';
-import { findOne, User } from './store/users';
+import 'core-js';
+import 'flatpickr/dist/themes/light.css';
 
-const factory = new AppFactory(AppState());
+import { AppFactory, debounce, LocalAppState, registerAuthListener } from '@makes-apps/lib';
+import App from './app';
+import { makesRootReducer, RootContext, RootState, LOCAL_KEY } from './root';
+import { authActions, usersActions } from './store';
+import { User } from './types';
+
+const factory = new AppFactory(RootState());
 
 const history = factory.createHistory();
-const store = factory.createStore(AppReducer(history), AppContext('mtbw-hlcay'));
+const store = factory.createStore(makesRootReducer(history), RootContext());
 
 store.subscribe(
   debounce(() => {
-    LocalAppState.write(AppLocalKey, store.getState().auth);
+    const { auth } = store.getState();
+    LocalAppState.write(LOCAL_KEY, { user: auth.user });
   }, 500)
 );
 
-const renderApp = factory.createRenderer(history, store, 'root', makesTheme =>
-  makesTheme({
-    primaryColor: 'green',
-    secondaryColor: 'neutral',
-    logoFont: 'Stint Ultra Expanded, serif',
-    headingFont: 'Fira Sans, sans-serif',
-    bodyFont: 'Cantarell, serif',
-  })
-);
+const renderApp = factory.createRenderer(history, store, 'root');
 
-registerAuthListener(auth =>
-  auth.user
-    ? store
-        .dispatch<any>(findOne.creator.worker({ email: auth.user.profile.email }))
-        .then((user: User | undefined) => store.dispatch(setUser.creator.action(user)))
-    : store.dispatch(setUser.creator.action(undefined))
-);
+registerAuthListener(auth => {
+  if (auth.user) {
+    const userEmail = auth.user.profile.email;
+
+    store.dispatch<any>(usersActions.list({})).then(() => {
+      const user = Object.values<User>(store.getState().users.db || {}).find(({ email }) => email === userEmail);
+
+      store.dispatch<any>(authActions.setUser.creator.action(user));
+      LocalAppState.write(LOCAL_KEY, { user });
+    });
+  } else {
+    store.dispatch(authActions.setUser.creator.action(undefined));
+    LocalAppState.write(LOCAL_KEY, {});
+  }
+});
 
 renderApp(App);
 

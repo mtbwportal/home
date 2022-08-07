@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@makes-apps/lib": {
+      "signature": "46f85d605acaed803bab85458b7fc851",
+      "file": true,
+      "replaced": "0.0.44"
+    }
+  }
+}

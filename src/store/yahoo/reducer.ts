@@ -1,6 +1,7 @@
 import { makesSliceReducer } from '@makes-apps/lib';
 
-import * as actions from './actions';
-import { State } from './types';
+import { YahooState } from '../../types';
 
-export default makesSliceReducer(State.NAMESPACE, new State(), actions);
+import * as actions from './actions';
+
+export default makesSliceReducer(YahooState.NAMESPACE, new YahooState(), actions);

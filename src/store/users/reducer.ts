@@ -1,6 +1,7 @@
 import { makesSliceReducer } from '@makes-apps/lib';
 
-import * as actions from './actions';
-import { NAMESPACE, State } from './types';
+import { UsersState } from '../../types/users';
 
-export default makesSliceReducer(NAMESPACE, new State(), actions);
+import * as actions from './actions';
+
+export default makesSliceReducer(UsersState.NAMESPACE, new UsersState(), actions);

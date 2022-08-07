@@ -1,12 +1,10 @@
 import { adminActions, makesAuthActions } from '@makes-apps/lib';
 import { UserPasswordCredential } from 'mongodb-stitch-browser-sdk';
 
-import AppContext from '../../app/context';
-import AppState from '../../app/state';
+import { RootContext, RootState } from '../../root';
+import { User } from '../../types';
 
-import { User } from '../users';
-
-const {
+export const {
   setUser,
   login,
   logout,
@@ -15,12 +13,12 @@ const {
   sendPasswordResetEmail,
   confirmEmail,
   resetPassword,
-} = makesAuthActions<AppState, AppContext, User>(
-  "Gramma's Kitchen",
+} = makesAuthActions<RootState, RootContext, User>(
+  'Shake On It',
   {
-    addAlert: adminActions.addAlert.creator.action,
-    startWork: adminActions.startWork.creator.action,
-    endWork: adminActions.endWork.creator.action,
+    addAlert: adminActions.addAlert,
+    startWork: adminActions.startWork,
+    endWork: adminActions.endWork,
   },
   stitch => ({
     login: (email: string, password: string) =>
@@ -34,5 +32,3 @@ const {
       stitch.clients().emailPassword.resetPassword(token, tokenId, password),
   })
 );
-
-export { setUser, login, logout, register, sendConfirmationEmail, sendPasswordResetEmail, confirmEmail, resetPassword };
